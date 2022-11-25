@@ -179,4 +179,4 @@ def optimise(points, m1, b1, m2, b2):
 
     return loss, m1, b1, m2, b2
 
-run(10, solve)
+run(4, solve)
