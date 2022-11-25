@@ -144,28 +144,24 @@ def optimise(points, m1, b1, m2, b2):
         loss_dist1 = dist1 ** 2
         loss_dist2 = dist2 ** 2
 
-        impact1 = 1
-        impact2 = 0.01
+        loss_for_this = 0
 
-        if loss_dist1 > loss_dist2:
-            impact1 = 0.01
-            impact2 = 1
+        if loss_dist1 < loss_dist2:
+            loss_for_this = loss_dist1
+            grad_dist1 = 2 * dist1
+            grad_m1_for_this = grad_dist1 * point[0]
+            grad_b1_for_this = grad_dist1
+            grad_m1 = grad_m1 + grad_m1_for_this
+            grad_b1 = grad_b1 + grad_b1_for_this
+        else:
+            loss_for_this = loss_dist2
+            grad_dist2 = 2 * dist2
+            grad_m2_for_this = grad_dist2 * point[0]
+            grad_b2_for_this = grad_dist2
+            grad_m2 = grad_m2 + grad_m2_for_this
+            grad_b2 = grad_b2 + grad_b2_for_this
 
-        loss_1_for_this = loss_dist1 * impact1
-        grad_dist1 = 2 * dist1 * impact1
-        grad_m1_for_this = grad_dist1 * point[0]
-        grad_b1_for_this = grad_dist1
-        grad_m1 = grad_m1 + grad_m1_for_this
-        grad_b1 = grad_b1 + grad_b1_for_this
-
-        loss_2_for_this = loss_dist2 * impact2
-        grad_dist2 = 2 * dist2 * impact2
-        grad_m2_for_this = grad_dist2 * point[0]
-        grad_b2_for_this = grad_dist2
-        grad_m2 = grad_m2 + grad_m2_for_this
-        grad_b2 = grad_b2 + grad_b2_for_this
-
-        loss = loss + loss_1_for_this + loss_2_for_this
+        loss = loss + loss_for_this
 
     descent_grad_m1 = lr * grad_m1
     descent_grad_b1 = lr * grad_b1
@@ -179,4 +175,4 @@ def optimise(points, m1, b1, m2, b2):
 
     return loss, m1, b1, m2, b2
 
-run(10, solve)
+run(4, solve)
