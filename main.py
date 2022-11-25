@@ -120,11 +120,10 @@ def solve(points: np.array) -> List[OutputLine]:
     b1 = r.rand()
     m2 = -m1
     b2 = r.rand()
-
+    print("before train",m1,b1,m2,b2)
     for i in range(10000):
         loss, m1, b1, m2, b2 = optimise(points,m1, b1, m2, b2)
-        print(i,":",loss)
-
+    print("after train", m1, b1, m2, b2)
     line1 = OutputLine(m=m1, b=b1)
     line2 = OutputLine(m=m2, b=b2)
     return [line1, line2]
@@ -141,8 +140,8 @@ def optimise(points, m1, b1, m2, b2):
         dist1 = m1*point[0] - point[1] + b1
         dist2 = m2*point[0] - point[1] + b2
 
-        loss_dist1 = dist1 ** 2
-        loss_dist2 = dist2 ** 2
+        loss_dist1 = np.abs(dist1)
+        loss_dist2 = np.abs(dist2)
 
         impact1 = 1
         impact2 = 0.01
@@ -152,14 +151,14 @@ def optimise(points, m1, b1, m2, b2):
             impact2 = 1
 
         loss_1_for_this = loss_dist1 * impact1
-        grad_dist1 = 2 * dist1 * impact1
+        grad_dist1 = loss_1_for_this / dist1
         grad_m1_for_this = grad_dist1 * point[0]
         grad_b1_for_this = grad_dist1
         grad_m1 = grad_m1 + grad_m1_for_this
         grad_b1 = grad_b1 + grad_b1_for_this
 
         loss_2_for_this = loss_dist2 * impact2
-        grad_dist2 = 2 * dist2 * impact2
+        grad_dist2 = loss_2_for_this / dist2
         grad_m2_for_this = grad_dist2 * point[0]
         grad_b2_for_this = grad_dist2
         grad_m2 = grad_m2 + grad_m2_for_this
@@ -167,15 +166,16 @@ def optimise(points, m1, b1, m2, b2):
 
         loss = loss + loss_1_for_this + loss_2_for_this
 
-    descent_grad_m1 = lr * grad_m1
-    descent_grad_b1 = lr * grad_b1
-    descent_grad_m2 = lr * grad_m2
-    descent_grad_b2 = lr * grad_b2
+    descent_grad_m1 = lr * grad_m1 
+    descent_grad_b1 = lr * grad_b1 
+    descent_grad_m2 = lr * grad_m2 
+    descent_grad_b2 = lr * grad_b2 
 
     m1 = m1 - descent_grad_m1
     b1 = b1 - descent_grad_b1
     m2 = m2 - descent_grad_m2
     b2 = b2 - descent_grad_b2
+
 
     return loss, m1, b1, m2, b2
 
